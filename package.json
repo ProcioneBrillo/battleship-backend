@@ -1,0 +1,30 @@
+{
+  "name": "battleship-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "execute": "node dist/index.js",
+    "build_execute": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/express-jwt": "^6.0.4",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/passport": "^1.0.9",
+    "@types/passport-http": "^0.3.9",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "express-jwt": "^7.7.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.7",
+    "passport-http": "^0.3.0",
+    "socket.io": "^4.5.1"
+  }
+}
