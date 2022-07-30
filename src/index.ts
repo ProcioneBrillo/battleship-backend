@@ -2,18 +2,26 @@ import mongoose from "mongoose";
 import {User} from "./models/User";
 import crypto from "crypto";
 import http from "http";
-import express from "express";
-import cors from "express";
+import express, {Router} from "express";
+import cors from "cors";
+import {auth_router} from "./routes/auth";
 
 const PORT = 8080;
 const HOSTNAME = "localhost";
 
 const app = express();
-app.use(cors());
 
-app.get("/", (req, res, next) => {
-    return res.status(200).json("Hello world");
-});
+// TODO: leggi questo https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+app.use(cors({
+    origin: "*"
+}));
+
+const v1 = Router();
+
+v1.use(auth_router);
+
+app.use("/api/v1", v1);
+
 //TODO creati le route dentro src/routes: https://expressjs.com/en/guide/routing.html
 //  leggi TUTTO ma in particolare express.Router in poi
 //  Vedi anche questo: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
@@ -40,12 +48,11 @@ mongoose.connect("mongodb://127.0.0.1:27017/battleship-db").then(async () => {
         const user = User.new_user("admin");
         user.role = User.Role.Admin;
         const a = crypto.randomBytes(20).toString("hex");
-        console.log("admin password: " ,a);
+        console.log("admin password: ",a);
         user.set_password(a);
         await user.save();
     }
     const server = http.createServer(app);
     server.listen(PORT, HOSTNAME);
+    console.log("Server avviato");
 });
-
-

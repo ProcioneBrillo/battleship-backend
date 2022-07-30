@@ -20,10 +20,13 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-jwt": "^7.7.5",
+    "express-validator": "^6.14.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.7",
+    "passport": "^0.6.0",
     "passport-http": "^0.3.0",
     "socket.io": "^4.5.1"
   }

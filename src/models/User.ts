@@ -21,6 +21,7 @@ export namespace User{
         role: Role;
         creation_date: Date;
         last_password_change: Date;
+        banned: boolean;
 
         set_password: (pwd: string) => void,
         validate_password: (pwd: string) => boolean,
@@ -38,6 +39,10 @@ export namespace User{
             type: Schema.Types.String,
             required: false,
             match: [new RegExp('^[a-zA-Z àèìòù]+$'), "Surname must not contains special characters"]
+        },
+        password:{
+            type: Schema.Types.String,
+            required: true
         },
         username: {
             type: Schema.Types.String,
@@ -71,6 +76,11 @@ export namespace User{
         last_password_change:{
             type: Schema.Types.Date,
             required: true
+        },
+        banned:{
+            type: Schema.Types.Boolean,
+            required: true,
+            default: false
         }
     });
 
@@ -78,14 +88,14 @@ export namespace User{
         this.salt = crypto.randomBytes(16).toString('hex'); //random 16-bytes hex string for salt
         const hmac = crypto.createHmac('sha512', this.salt );
         hmac.update( pwd );
-        this.digest = hmac.digest('hex'); // The final digest depends both by the password and the salt
+        this.password = hmac.digest('hex'); // The final digest depends both by the password and the salt
     }
 
     schema.methods.validate_password = function(pwd:string):boolean {
         const hmac = crypto.createHmac('sha512', this.salt );
         hmac.update(pwd);
         const digest = hmac.digest('hex');
-        return (this.digest === digest);
+        return (this.password === digest);
     }
 
     schema.methods.has_role = function (role: Role): boolean{
