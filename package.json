@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "execute": "node dist/index.js",
+    "serve": "node dist/index.js",
     "build_execute": "tsc && node dist/index.js"
   },
   "keywords": [],
