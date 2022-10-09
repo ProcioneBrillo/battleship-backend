@@ -22,6 +22,7 @@ export namespace Game{
         sunk: boolean
     }
 
+
     export interface Game extends Document{
         id: Types.ObjectId,
         player1: User.User | Types.ObjectId,
@@ -32,6 +33,7 @@ export namespace Game{
         started: Date,
         ended: Date,
         ranked: boolean
+        // TODO: lista di mosse
     }
 
     const ShipSchema = new Schema<Ship>({
@@ -61,6 +63,7 @@ export namespace Game{
     })
 
     const schema = new Schema<Game>({
+        // TODO: aggiungere lista di mosse
         player1:{
             type: Types.ObjectId,
             required: true,

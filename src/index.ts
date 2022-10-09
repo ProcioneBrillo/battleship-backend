@@ -5,6 +5,7 @@ import http from "http";
 import express, {Router} from "express";
 import cors from "cors";
 import {auth_router} from "./routes/auth";
+import {user_router} from "./routes/user";
 
 const PORT = 8080;
 const HOSTNAME = "localhost";
@@ -19,6 +20,7 @@ app.use(cors({
 const v1 = Router();
 
 v1.use(auth_router);
+v1.use("/users", user_router);
 
 app.use("/api/v1", v1);
 

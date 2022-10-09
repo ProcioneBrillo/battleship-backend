@@ -4,49 +4,53 @@ import {BasicStrategy} from "passport-http";
 import {User} from "../models/User";
 import {Router} from "express";
 import {sign} from "jsonwebtoken";
+import {expressjwt} from "express-jwt";
 
-export interface TokenData{
-    id : string;
+export interface TokenData {
+    id: string;
     username: string,
     role: User.Role,
 }
 
-declare global{
-    namespace Express{
-        interface User extends TokenData{}
+declare global {
+    namespace Express {
+        interface User extends TokenData {
+        }
     }
 }
 
-if(process.env.SECRET_KEY === undefined){
+
+if (process.env.SECRET_KEY === undefined) {
     console.error("secret key must be defined as environmental variable");
     process.exit(-1);
 }
 const secret: string = process.env.SECRET_KEY;
+export const auth = expressjwt({algorithms:["HS256"], secret: secret, requestProperty: "user"});
 
 passport.use(
     new BasicStrategy(async (username, password, done) => {
         const user = await User.model.findOne({username: username});
-        if(!user){
+        if (!user) {
             console.error("1 invalid credentials");
             return done({status: 403, error: true});
         }
-        if(!user.validate_password(password)){
+        if (!user.validate_password(password)) {
             console.error("2 invalid credentials");
             return done({status: 403, error: true});
         }
-        if(user.banned){
+        if (user.banned) {
             console.error("banned user tried to login: " + user.username);
             return done({status: 403, error: true});
         }
         // tutto nella norma
-        return done(null,user);
+        return done(null, user);
     })
 )
 
 export const auth_router = Router();
 //                                                   defined above , no cookie session
-auth_router.get("/login", passport.authenticate('basic', {session: false}), (req, res, next) =>{
-    if(!req.user){
+auth_router.get("/login", passport.authenticate('basic', {session: false}), (req, res, next) => {
+    if (!req.user) {
         return res.status(403).json({error: true, message: "3 invalid credentials"});
     }
     // filling token body
@@ -59,13 +63,3 @@ auth_router.get("/login", passport.authenticate('basic', {session: false}), (req
     const token = sign(payload, secret, {expiresIn: "15m"});
     return res.status(200).json({token: token});
 });
-
-
-// // TODO
-// auth_router.post("/login", ) ;
-//
-// //TODO
-// auth_router.delete("/login");
-//
-// //TODO
-// auth_router.put("/login");
