@@ -7,7 +7,7 @@ import cors from "cors";
 import {auth_router} from "./routes/auth";
 import {user_router} from "./routes/user";
 
-const PORT = 8080;
+const PORT = 8081;
 const HOSTNAME = "localhost";
 
 
