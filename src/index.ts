@@ -50,10 +50,12 @@ app.use("/api/v1", v1);
 
 let auth = {};
 
+console.log(user);
+console.log(password);
+
 if(user && password){
     auth = { user: user, pass: password, authSource: "test"};
 }
-
 
 mongoose.connect("mongodb://127.0.0.1:27017/battleship", auth).then(async () => {
     const admin = await User.model.findOne({username:"admin"});
