@@ -28,3 +28,5 @@ jobs:
                 npm run serve
               env:
                 SECRET_KEY: secrets.SECRET_KEY
+                MONGO_USER: secrets.MONGO_USER
+                MONGO_PASSWORD: secrets.MONGO_PASSWORD

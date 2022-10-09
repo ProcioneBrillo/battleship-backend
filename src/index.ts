@@ -10,6 +10,10 @@ import {user_router} from "./routes/user";
 const PORT = 8080;
 const HOSTNAME = "localhost";
 
+
+const user: string | undefined = process.env.MONGO_USER;
+const password: string | undefined = process.env.MONGO_PASSWORD;
+
 const app = express();
 
 // TODO: leggi questo https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
@@ -44,7 +48,9 @@ app.use("/api/v1", v1);
 // GET /api/v1/users/1/friends
 // deve ritornarti la lista di amici dell'utente con ID uno (N.B: Mongo non usa numeri come ID ma stringhe oscene)
 
-mongoose.connect("mongodb://127.0.0.1:27017/battleship-db").then(async () => {
+const mongo_uri = (user && password)? `mongodb://${user}:${password}@127.0.0.1:27017/battleship`: "mongodb://127.0.0.1:27017/battleship";
+
+mongoose.connect(mongo_uri).then(async () => {
     const admin = await User.model.findOne({username:"admin"});
     if(!admin){
         const user = User.new_user("admin");
