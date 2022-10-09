@@ -25,7 +25,7 @@ jobs:
         steps:
             - name: Run project
               run: |
-                npm run serve
+                systemctl --user restart battleship.service
               env:
                 SECRET_KEY: ${{ secrets.SECRET_KEY }}
                 MONGO_USER: ${{ secrets.MONGO_USER }}
