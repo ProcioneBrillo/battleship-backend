@@ -25,6 +25,7 @@ jobs:
         steps:
             - name: Run project
               run: |
+                export XDG_RUNTIME_DIR=/run/user/$(id -u)
                 systemctl --user restart battleship.service
               env:
                 SECRET_KEY: ${{ secrets.SECRET_KEY }}
