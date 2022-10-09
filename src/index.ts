@@ -48,9 +48,14 @@ app.use("/api/v1", v1);
 // GET /api/v1/users/1/friends
 // deve ritornarti la lista di amici dell'utente con ID uno (N.B: Mongo non usa numeri come ID ma stringhe oscene)
 
-const mongo_uri = (user && password)? `mongodb://${user}:${password}@127.0.0.1:27017/battleship?authSource=test`: "mongodb://127.0.0.1:27017/battleship";
+let auth = {};
 
-mongoose.connect(mongo_uri).then(async () => {
+if(user && password){
+    auth = { user: user, pass: password, authSource: "test"};
+}
+
+
+mongoose.connect("mongodb://127.0.0.1:27017/battleship", auth).then(async () => {
     const admin = await User.model.findOne({username:"admin"});
     if(!admin){
         const user = User.new_user("admin");
