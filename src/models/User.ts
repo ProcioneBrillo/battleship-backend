@@ -54,6 +54,7 @@ export namespace User{
             required: false,
         },
         role:{
+            type: Schema.Types.Number,
             required: true
         },
         creation_date:{
