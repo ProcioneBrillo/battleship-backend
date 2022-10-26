@@ -10,9 +10,9 @@ export namespace Message{
     }
 
     export interface Message extends Document {
-        readonly id: Types.ObjectId,
-        sender: User.User | Types.ObjectId,
+        readonly id: Types.ObjectId,        // message id
         receiver: User.User | Game.Game | Types.ObjectId,
+        sender: User.User | Types.ObjectId,
         onModel: Type,
         content: string,
         datetime: Date
@@ -22,7 +22,7 @@ export namespace Message{
         sender: {
             type: Schema.Types.ObjectId,
             required: true,
-            ref: 'User'
+            ref: 'user'
         },
         receiver: {
             type: Schema.Types.ObjectId,

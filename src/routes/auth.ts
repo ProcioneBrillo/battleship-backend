@@ -42,7 +42,7 @@ passport.use(
             console.error("banned user tried to login: " + user.username);
             return done({status: 403, error: true});
         }
-        // tutto nella norma
+        // all ok
         return done(null, user);
     })
 )
@@ -59,7 +59,7 @@ auth_router.get("/login", passport.authenticate('basic', {session: false}), (req
         username: req.user.username,
         role: req.user.role
     }
-    // firma token
+    // token sign
     const token = sign(payload, secret, {expiresIn: "15m"});
     return res.status(200).json({token: token});
 });

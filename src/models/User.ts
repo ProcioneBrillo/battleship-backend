@@ -4,14 +4,12 @@ import crypto from "crypto";
 export namespace User{
 
     export enum Role {
-        User= "user",
-        Moderator= "moderator",
-        Admin= "admin",
+        User,
+        Moderator,
+        Admin,
     }
 
     export interface User extends Document{
-        name: string | undefined;
-        surname: string | undefined;
         username: string;
         password: string;
         salt: string;
@@ -30,16 +28,6 @@ export namespace User{
     }
 
     const schema = new Schema<User>({
-        name: {
-            type: Schema.Types.String,
-            required: false,
-            match: [new RegExp('^[a-zA-Z àèìòù]+$'), "Name must not contains special characters"]
-        },
-        surname: {
-            type: Schema.Types.String,
-            required: false,
-            match: [new RegExp('^[a-zA-Z àèìòù]+$'), "Surname must not contains special characters"]
-        },
         password:{
             type: Schema.Types.String,
             required: true
@@ -49,7 +37,7 @@ export namespace User{
             required: true,
             unique: true,
             match: [new RegExp('^[a-zA-Z0-9\-_]+$'), "Username contains invalid character, must contains only a-z, A-Z, 0-9, - _"],
-            minlength: [3, "Username too short, must be at least 3 characters long"],
+            minlength: [4, "Username too short, must be at least 3 characters long"],
             maxlength: [20, "Username too long, must be less than 20 characters long"]
         },
         salt: {
@@ -66,7 +54,6 @@ export namespace User{
             required: false,
         },
         role:{
-            type: Schema.Types.String,
             required: true
         },
         creation_date:{
@@ -108,7 +95,7 @@ export namespace User{
 
     export const model = mongooseModel<User>('User', schema);
 
-    export function new_user(username: string, name?: string, surname?: string){
-        return new model({username, name, surname, creation_date: new Date(), last_password_change: new Date(), role: Role.User});
+    export function new_user(username: string){
+        return new model({username, creation_date: new Date(), last_password_change: new Date(), role: Role.User});
     }
 }
