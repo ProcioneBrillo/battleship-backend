@@ -4,9 +4,9 @@ import crypto from "crypto";
 export namespace User{
 
     export enum Role {
-        User,
-        Moderator,
-        Admin,
+        User = "User",
+        Moderator = "Moderator",
+        Admin = "Admin",
     }
 
     export interface User extends Document{
@@ -16,7 +16,7 @@ export namespace User{
         salt: string;
         friends: User[];
         avatar: string | undefined;
-        role: Role;
+        role: User.Role;
         creation_date: Date;
         last_password_change: Date;
         banned: boolean;
@@ -54,8 +54,9 @@ export namespace User{
             required: false,
         },
         role:{
-            type: Schema.Types.Number,
-            required: true
+            type: Schema.Types.String,
+            required: true,
+            default: Role.User
         },
         creation_date:{
             type: Schema.Types.Date,

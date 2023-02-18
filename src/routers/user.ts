@@ -33,12 +33,11 @@ user_router.get("/:id", auth, async (req, res, next) => {
 });
 
 // elimina il mio utente
-//TODO eliminare la lista amici e eliminarsi dalla lista amici degli amici
 user_router.delete("/:id", auth, async (req, res, next) => {
     if (!req.user) {
         return res.status(500).json({error: true, message: "Oops, something went wrong"});
     }
-    // se l'utente non è admin e l'id nella richiesta non corrisponde all'id nell'url
+    // se l'utente non è admin o l'id nella richiesta non corrisponde all'id nell'url
     if (req.user.role !== User.Role.Admin && req.user.id !== req.params.id) {
         return res.status(403).json({error: true, message: "Unauthorized"});
     }
@@ -52,6 +51,7 @@ user_router.delete("/:id", auth, async (req, res, next) => {
                 return res.status(404).json({error: true, message: "User not found"});  // notifico con 404
             }
             user.delete();  // elimino utente (spero)
+            //TODO: eliminare la lista amici
             return res.status(200).json({error: false, message: ""}); // ok
         } catch (e) {
             console.error(e);

@@ -8,11 +8,8 @@ import cors from "cors";
 import {auth_router} from "./routers/auth";
 import {user_router} from "./routers/user";
 
-
 const PORT = 8081;
 const HOSTNAME = "localhost";
-
-
 
 const user: string | undefined = process.env.MONGO_USER;
 const password: string | undefined = process.env.MONGO_PASSWORD;

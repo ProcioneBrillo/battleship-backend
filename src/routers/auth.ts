@@ -64,11 +64,12 @@ auth_router.get("/login", passport.authenticate('basic', {session: false}), (req
         id: req.user.id,
         username: req.user.username,
         role: req.user.role,
-        banned: req.user.,
-
+        banned: req.user.banned,
+        last_pw_change: req.user.last_pw_change,
+        creation_date: req.user.creation_date
     }
     // token sign
-    const token = sign(payload, secret, {expiresIn: "15m"});
+    const token = sign(payload, secret, {expiresIn: "1h"});
     return res.status(200).json({token: token});
 });
 
@@ -78,21 +79,26 @@ auth_router.post("/register",
         [Segments.BODY]: Joi.object().keys({
             username: Joi.string().required().min(5).max(20).alphanum(),
             password: joiPassword.string().required().minOfSpecialCharacters(1).minOfLowercase(1)
-                .minOfUppercase(1).minOfNumeric(1).noWhiteSpaces(),
-            role: Joi.number().default(0)
+                .minOfUppercase(1).minOfNumeric(1).noWhiteSpaces()
         })
     }),
     async (req, res, next) => {
-        console.log("Body: " + req.body);
-        if(User.Role[req.body.role] === undefined){
-            //hasn't role
-            return res.status(403).json({error: true, message:"Invalid role"})
-        }
+        // TODO: non dovrebbe servire perché di default un utente ha un ruolo
+        // hasn't role
+        // if(req.user.role === undefined)
+        //     return res.status(403).json({error: true, message:"Invalid role"})
+
         // has role
         let u: User.User = User.new_user(req.body.username);
         u.set_password(req.body.password);
-        u.set_role(req.body.role);
-        await u.save();
-
-        return res.status(200).json({error: false, message:""});
+        try{
+            const data = await u.save();
+            return res.status(200).json({error: false, message: "", id: data._id});
+        }
+        catch(e: any){
+            if (e.code === 11000) {
+                return next({statusCode: 500, error: true, message: "User already exists"});
+            }
+            return next({status: 500, error: true, message: e.message});
+        }
     });
