@@ -5,12 +5,19 @@ import {User} from "../models/User";
 import {Router} from "express";
 import {sign} from "jsonwebtoken";
 import {expressjwt} from "express-jwt";
+import {joiPasswordExtendCore} from "joi-password";
+import {celebrate, Segments, Joi} from "celebrate";
 
 export interface TokenData {
     id: string;
     username: string,
     role: User.Role,
+    banned: User.User["banned"],
+    last_pw_change: User.User["last_password_change"]
+    creation_date: User.User["creation_date"]
 }
+
+const joiPassword = Joi.extend(joiPasswordExtendCore);
 
 declare global {
     namespace Express {
@@ -18,7 +25,6 @@ declare global {
         }
     }
 }
-
 
 if (process.env.SECRET_KEY === undefined) {
     console.error("secret key must be defined as environmental variable");
@@ -38,7 +44,7 @@ passport.use(
             console.error("2 invalid credentials");
             return done({status: 403, error: true});
         }
-        if (user.banned) {
+        if (user.banned){
             console.error("banned user tried to login: " + user.username);
             return done({status: 403, error: true});
         }
@@ -57,9 +63,36 @@ auth_router.get("/login", passport.authenticate('basic', {session: false}), (req
     const payload: TokenData = {
         id: req.user.id,
         username: req.user.username,
-        role: req.user.role
+        role: req.user.role,
+        banned: req.user.,
+
     }
     // token sign
     const token = sign(payload, secret, {expiresIn: "15m"});
     return res.status(200).json({token: token});
 });
+
+// create a new user
+auth_router.post("/register",
+    celebrate({
+        [Segments.BODY]: Joi.object().keys({
+            username: Joi.string().required().min(5).max(20).alphanum(),
+            password: joiPassword.string().required().minOfSpecialCharacters(1).minOfLowercase(1)
+                .minOfUppercase(1).minOfNumeric(1).noWhiteSpaces(),
+            role: Joi.number().default(0)
+        })
+    }),
+    async (req, res, next) => {
+        console.log("Body: " + req.body);
+        if(User.Role[req.body.role] === undefined){
+            //hasn't role
+            return res.status(403).json({error: true, message:"Invalid role"})
+        }
+        // has role
+        let u: User.User = User.new_user(req.body.username);
+        u.set_password(req.body.password);
+        u.set_role(req.body.role);
+        await u.save();
+
+        return res.status(200).json({error: false, message:""});
+    });

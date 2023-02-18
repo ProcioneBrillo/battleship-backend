@@ -3,12 +3,15 @@ import {User} from "./models/User";
 import crypto from "crypto";
 import http from "http";
 import express, {Router} from "express";
+import bodyParser from "body-parser";
 import cors from "cors";
-import {auth_router} from "./routes/auth";
-import {user_router} from "./routes/user";
+import {auth_router} from "./routers/auth";
+import {user_router} from "./routers/user";
+
 
 const PORT = 8081;
 const HOSTNAME = "localhost";
+
 
 
 const user: string | undefined = process.env.MONGO_USER;
@@ -24,11 +27,15 @@ app.use(cors({
 const v1 = Router();
 
 v1.use(auth_router);
-v1.use("/users", user_router);
+//check token
 
+v1.use("/users", user_router);
+//altri macrorouter
+
+app.use(bodyParser.json());
 app.use("/api/v1", v1);
 
-//TODO creati le route dentro src/routes: https://expressjs.com/en/guide/routing.html
+//TODO creati le route dentro src/routers: https://expressjs.com/en/guide/routing.html
 //  leggi TUTTO ma in particolare express.Router in poi
 //  Vedi anche questo: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 // In linea generale:
@@ -62,7 +69,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/battleship", auth).then(async () => 
         const user = User.new_user("admin");
         user.role = User.Role.Admin;
         const a = crypto.randomBytes(20).toString("hex");
-        console.log("admin password: ",a);
+        //console.log("admin password: ",a);
         user.set_password(a);
         await user.save();
     }

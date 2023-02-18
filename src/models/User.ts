@@ -10,10 +10,10 @@ export namespace User{
     }
 
     export interface User extends Document{
+        readonly id: Types.ObjectId;
         username: string;
         password: string;
         salt: string;
-        readonly id: Types.ObjectId;
         friends: User[];
         avatar: string | undefined;
         role: Role;
